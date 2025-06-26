@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Just a English Game</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #e0e0e0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 420px;
+      margin: 20px auto;
+      padding: 10px;
+      text-align: center;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    #battle-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+    #player-container, #enemy-container {
+      width: 45%;
+      text-align: center;
+    }
+    .hp-container {
+      width: 100%;
+      margin-top: 10px;
+    }
+    .hp-text {
+      font-weight: bold;
+      margin-bottom: 4px;
+      text-align: left;
+      font-size: 16px;
+    }
+    .hp-bar-container {
+      width: 100%;
+      height: 25px;
+      border: 2px solid #000;
+      background-color: #ccc;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hp-bar {
+      height: 100%;
+      width: 100%;
+      background-color: #4caf50;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 25px;
+      user-select: none;
+      white-space: nowrap;
+    }
+    #player-model {
+      width: 60px;
+      height: 60px;
+      background-color: red;
+      border-radius: 50%;
+      margin: 0 auto;
+    }
+    #enemy-model {
+      width: 60px;
+      height: 60px;
+      background-color: #2196f3;
+      margin: 0 auto;
+    }
+    #question {
+      margin-top: 20px;
+    }
+    #log {
+      min-height: 24px;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+    #score {
+      margin-bottom: 10px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #difficulty-select {
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Just a English Game</h1>
+
+  <div id="difficulty-select">
+    <p>เลือกระดับความยาก:</p>
+    <button onclick="startGame('Easy')">Easy</button>
+    <button onclick="startGame('Normal')">Normal</button>
+    <button onclick="startGame('Hard')">Hard</button>
+  </div>
+
+  <div id="battle-container" style="display: none;">
+    <div id="player-container">
+      <div id="player-model"></div>
+      <div class="hp-container">
+        <div class="hp-text">Player HP</div>
+        <div class="hp-bar-container">
+          <div id="player-hp-bar" class="hp-bar">100 / 100</div>
+        </div>
+      </div>
+    </div>
+    <div id="enemy-container">
+      <div id="enemy-model"></div>
+      <div class="hp-container">
+        <div class="hp-text">Enemy HP</div>
+        <div class="hp-bar-container">
+          <div id="enemy-hp-bar" class="hp-bar">100 / 100</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="question">
+    <p>❓ คำถามจะอยู่ที่นี่</p>
+  </div>
+
+  <div id="log"></div>
+  <div id="score">Score: 0</div>
+  <button onclick="resetGame()">เริ่มใหม่</button>
+
+  <audio id="bgm" src="assets/Unlocated_Hell.mp3" loop></audio>
+  <!-- เชื่อม scripts -->
+  <script src="questions.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
