@@ -3,142 +3,362 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Just a English Game</title>
+  <title>English Battle</title>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background-color: #e0e0e0;
-    }
     body {
-      font-family: Arial, sans-serif;
-      max-width: 420px;
-      margin: 20px auto;
-      padding: 10px;
-      text-align: center;
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, #232526 0%, #414345 100%);
+      min-height: 100vh;
+      font-family: 'Segoe UI', 'Kanit', Arial, sans-serif;
+      margin: 0;
+      color: #f3f3f3;
+      letter-spacing: 0.01em;
+    }
+    #game-ui {
+      max-width: 480px;
+      margin: 32px auto 0 auto;
+      background: rgba(30,30,40,0.98);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.22);
+      padding: 32px 18px 24px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
     }
     #battle-container {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 30px;
-    }
-    #player-container, #enemy-container {
-      width: 45%;
-      text-align: center;
-    }
-    .hp-container {
       width: 100%;
-      margin-top: 10px;
+      gap: 18px;
+      margin-bottom: 8px;
     }
-    .hp-text {
-      font-weight: bold;
-      margin-bottom: 4px;
-      text-align: left;
-      font-size: 16px;
+    .character {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      width: 48%;
+    }
+    .character img {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      border-radius: 16px;
+      background: #232526;
+      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.18);
+      border: 2px solid #b2ff59;
     }
     .hp-bar-container {
       width: 100%;
-      height: 25px;
-      border: 2px solid #000;
-      background-color: #ccc;
-      border-radius: 6px;
-      position: relative;
+      background: #222;
+      border-radius: 8px;
       overflow: hidden;
+      box-shadow: 0 1px 4px 0 rgba(0,0,0,0.12);
     }
     .hp-bar {
-      height: 100%;
       width: 100%;
-      background-color: #4caf50;
-      border-radius: 4px;
-      transition: width 0.3s ease;
-      color: white;
+      background: linear-gradient(90deg, #ff5252 0%, #ffe082 100%);
+      color: #232526;
       font-weight: bold;
       text-align: center;
-      line-height: 25px;
-      user-select: none;
-      white-space: nowrap;
+      padding: 4px 0;
+      font-size: 1.1em;
+      border-radius: 8px;
+      transition: width 0.3s;
     }
-    #player-model {
-      width: 60px;
-      height: 60px;
-      background-color: red;
-      border-radius: 50%;
-      margin: 0 auto;
+    #action-buttons {
+      display: flex;
+      gap: 18px;
+      margin: 8px 0 0 0;
     }
-    #enemy-model {
-      width: 60px;
-      height: 60px;
-      background-color: #2196f3;
-      margin: 0 auto;
+    #action-buttons button {
+      background: linear-gradient(90deg, #b2ff59 0%, #ffe082 100%);
+      color: #232526;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 28px;
+      font-size: 1.1em;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(178,255,89,0.12);
+      transition: background 0.2s, transform 0.1s;
+    }
+    #action-buttons button:hover {
+      background: linear-gradient(90deg, #ffe082 0%, #b2ff59 100%);
+      transform: translateY(-2px) scale(1.04);
     }
     #question {
-      margin-top: 20px;
+      background: #232526;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px 0 rgba(255,255,255,0.04);
+      padding: 18px 12px 14px 12px;
+      width: 100%;
+      margin: 0 0 8px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    #question-text {
+      font-size: 1.15em;
+      color: #ffe082;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    #answerButtons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      width: 100%;
+    }
+    #answerButtons button {
+      background: linear-gradient(90deg, #64b5f6 0%, #b2ff59 100%);
+      color: #232526;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-size: 1em;
+      cursor: pointer;
+      box-shadow: 0 1px 6px 0 rgba(100,181,246,0.10);
+      transition: background 0.2s, transform 0.1s;
+    }
+    #answerButtons button:hover {
+      background: linear-gradient(90deg, #b2ff59 0%, #64b5f6 100%);
+      transform: translateY(-2px) scale(1.04);
     }
     #log {
-      min-height: 24px;
-      margin: 15px 0;
-      font-weight: bold;
+      min-height: 28px;
+      color: #b2ff59;
+      font-size: 1.1em;
+      font-weight: 600;
+      text-align: center;
+      margin: 6px 0 0 0;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 4px #232526;
     }
     #score {
-      margin-bottom: 10px;
+      color: #ffe082;
+      font-size: 1.1em;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      text-align: center;
     }
-    button {
-      margin: 5px;
-      padding: 8px 16px;
-      font-size: 16px;
+    #reset-btn {
+      background: linear-gradient(90deg, #ff5252 0%, #ffe082 100%);
+      color: #232526;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 32px;
+      font-size: 1.1em;
       cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 2px 8px 0 rgba(255,82,82,0.10);
+      transition: background 0.2s, transform 0.1s;
+    }
+    #reset-btn:hover {
+      background: linear-gradient(90deg, #ffe082 0%, #ff5252 100%);
+      transform: translateY(-2px) scale(1.04);
+    }
+    /* --- LOBBY REVAMP --- */
+    #lobby-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: none;
+      z-index: 10;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      backdrop-filter: blur(0.5px);
+      animation: fadeIn 0.7s;
+    }
+    #lobby-logo {
+      font-size: 3.2em;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 2px 8px #ffe08288);
+      user-select: none;
+    }
+    #lobby-title {
+      font-size: 2.1em;
+      font-weight: 800;
+      color: #ffe082;
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+      text-shadow: 0 2px 8px #23252688;
+    }
+    #lobby-subtitle {
+      font-size: 1.1em;
+      color: #b2ff59;
+      margin-bottom: 10px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    #lobby-desc {
+      font-size: 1em;
+      color: #fffde7;
+      margin-bottom: 22px;
+      max-width: 340px;
+      text-align: center;
+      opacity: 0.92;
     }
     #difficulty-select {
-      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      background: rgba(30,30,40,0.98);
+      border-radius: 22px;
+      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.22);
+      padding: 38px 24px 32px 24px;
+      max-width: 370px;
+      align-items: center;
+      animation: popIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+    }
+    #difficulty-select button {
+      background: linear-gradient(90deg, #64b5f6 0%, #ffe082 100%);
+      color: #232526;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      padding: 16px 0;
+      font-size: 1.18em;
+      width: 210px;
+      cursor: pointer;
+      box-shadow: 0 2px 12px 0 rgba(100,181,246,0.10);
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      margin: 0 auto;
+      letter-spacing: 0.03em;
+    }
+    #difficulty-select button:hover {
+      background: linear-gradient(90deg, #ffe082 0%, #64b5f6 100%);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 18px 0 rgba(255,224,130,0.18);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      80% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    @media (max-width: 600px) {
+      #game-ui {
+        max-width: 98vw;
+        padding: 12vw 2vw 8vw 2vw;
+      }
+      .character img {
+        width: 64px;
+        height: 64px;
+      }
+      #battle-container {
+        gap: 8px;
+      }
+      #question {
+        padding: 10px 2vw 8px 2vw;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Just a English Game</h1>
+  <!-- Lobby revamp จะถูกสร้างโดย main.js (CSS lobby อยู่ใน <style>) -->
 
-  <div id="difficulty-select">
-    <p>เลือกระดับความยาก:</p>
-    <button onclick="startGame('Easy')">Easy</button>
-    <button onclick="startGame('Normal')">Normal</button>
-    <button onclick="startGame('Hard')">Hard</button>
-  </div>
-
-  <div id="battle-container" style="display: none;">
-    <div id="player-container">
-      <div id="player-model"></div>
-      <div class="hp-container">
-        <div class="hp-text">Player HP</div>
+  <!-- Game UI (ซ่อนไว้ก่อน ให้ main.js ควบคุม) -->
+  <div id="game-ui" style="display:none;">
+    <div id="battle-container">
+      <div class="character">
+        <img id="player-img" src="asset/texture/player/P1_IDLE.gif" alt="Player" />
         <div class="hp-bar-container">
-          <div id="player-hp-bar" class="hp-bar">100 / 100</div>
+          <div id="player-hp-bar" class="hp-bar" data-max="100">100</div>
+        </div>
+      </div>
+      <div class="character">
+        <img id="enemy-img" src="asset/texture/enemy/Th14GreenYinYangEnemy.png" alt="Enemy" onerror="this.src='asset/texture/enemy/E1_Idle.gif'" />
+        <div class="hp-bar-container">
+          <div id="enemy-hp-bar" class="hp-bar" data-max="100">100</div>
         </div>
       </div>
     </div>
-    <div id="enemy-container">
-      <div id="enemy-model"></div>
-      <div class="hp-container">
-        <div class="hp-text">Enemy HP</div>
-        <div class="hp-bar-container">
-          <div id="enemy-hp-bar" class="hp-bar">100 / 100</div>
-        </div>
-      </div>
+    <div id="action-buttons" style="display:none;">
+      <button onclick="playerAction('attack')">🔪 โจมตี</button>
+      <button onclick="playerAction('guard')">🛡️ ป้องกัน</button>
     </div>
+    <div id="question">
+      <p id="question-text">❓ คำถามจะอยู่ที่นี่</p>
+      <div id="answerButtons"></div>
+    </div>
+    <div id="log"></div>
+    <div id="score">Score: 0</div>
+    <button id="reset-btn" onclick="resetGame()">เริ่มใหม่</button>
   </div>
 
-  <div id="question">
-    <p>❓ คำถามจะอยู่ที่นี่</p>
+
+  <!-- Background Music (auto play, loop, hidden) -->
+  <audio id="bgm" src="audio/Canto_I_Battle_Theme_A1.mp3" loop preload="auto" style="display:none;"></audio>
+  <div id="bgm-unlock" style="display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(30,30,40,0.96);color:#ffe082;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+    <div style="font-size:2em;">🔊</div>
+    <div style="font-size:1.2em;font-weight:700;">แตะหน้าจอหรือกดปุ่มด้านล่างเพื่อเปิดเสียงเพลง</div>
+    <button id="bgm-unlock-btn" style="background:linear-gradient(90deg,#ffe082,#b2ff59);color:#232526;font-weight:700;border:none;border-radius:16px;padding:18px 44px;font-size:1.2em;box-shadow:0 2px 12px 0 rgba(255,224,130,0.10);cursor:pointer;">เปิดเพลง</button>
   </div>
+  <!-- ปุ่มปิด/เปิดเพลง -->
+  <button id="bgm-toggle" title="ปิด/เปิดเพลง" style="position:fixed;top:18px;right:18px;z-index:10000;background:rgba(30,30,40,0.92);border:none;border-radius:50%;width:48px;height:48px;box-shadow:0 2px 12px 0 rgba(255,224,130,0.10);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.7em;color:#ffe082;transition:background 0.2s;">
+    <span id="bgm-toggle-icon">🔊</span>
+  </button>
 
-  <div id="log"></div>
-  <div id="score">Score: 0</div>
-  <button onclick="resetGame()">เริ่มใหม่</button>
-
-  <audio id="bgm" src="assets/Unlocated_Hell.mp3" loop></audio>
-  <!-- เชื่อม scripts -->
   <script src="questions.js"></script>
   <script src="main.js"></script>
+  <script>
+  // --- BGM UNLOCK UI ---
+  // ฟังก์ชันนี้จะถูกเรียกเฉพาะตอนเริ่มเกมเท่านั้น
+  window.tryPlayBGM = function() {
+    var bgm = document.getElementById('bgm');
+    if (!bgm) return;
+    bgm.volume = 0.5;
+    bgm.play().then(()=>{
+      document.getElementById('bgm-unlock').style.display = 'none';
+      updateBGMIcon();
+    }).catch(()=>{
+      document.getElementById('bgm-unlock').style.display = 'flex';
+      updateBGMIcon();
+    });
+  }
+  // ปุ่ม unlock
+  window.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('bgm-unlock-btn');
+    if (btn) btn.onclick = window.tryPlayBGM;
+    // ปุ่ม toggle เพลง
+    var toggle = document.getElementById('bgm-toggle');
+    if (toggle) {
+      toggle.onclick = function() {
+        var bgm = document.getElementById('bgm');
+        if (!bgm) return;
+        if (bgm.paused) {
+          window.tryPlayBGM();
+        } else {
+          bgm.pause();
+          updateBGMIcon();
+        }
+      };
+    }
+    updateBGMIcon();
+  });
+  // อัปเดตไอคอนปุ่มเพลง
+  function updateBGMIcon() {
+    var bgm = document.getElementById('bgm');
+    var icon = document.getElementById('bgm-toggle-icon');
+    if (!bgm || !icon) return;
+    icon.textContent = bgm.paused ? '🔇' : '🔊';
+  }
+  // อัปเดตไอคอนเมื่อเพลงหยุดเอง
+  document.addEventListener('visibilitychange', updateBGMIcon);
+  if (window.bgm) window.bgm.onpause = updateBGMIcon;
+  if (window.bgm) window.bgm.onplay = updateBGMIcon;
+  </script>
 </body>
 </html>
