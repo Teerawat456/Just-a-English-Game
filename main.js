@@ -88,9 +88,45 @@ function updateHPBars() {
 function playerAction(type) {
   isGuarding = type === 'guard';
   elements.actionButtons.style.display = 'none';
+  if (type === 'attack') showPlayerAttackAnim();
   askQuestion();
 }
 window.playerAction = playerAction;
+
+// --- PLAYER ANIMATION (Redesign) ---
+function showPlayerAttackAnim() {
+  const playerImg = document.getElementById('player-img');
+  if (!playerImg) return;
+  const oldSrc = playerImg.src;
+  playerImg.onerror = function() {
+    playerImg.src = 'asset/texture/player/P1_attack.gif';
+    playerImg.onerror = null;
+  };
+  playerImg.src = 'asset/texture/player/P1_attack.mp4';
+  playerImg.classList.add('player-attack-anim-redesign');
+  setTimeout(() => {
+    playerImg.src = oldSrc;
+    playerImg.classList.remove('player-attack-anim-redesign');
+    playerImg.onerror = null;
+  }, 700);
+}
+
+function showPlayerHitAnim() {
+  const playerImg = document.getElementById('player-img');
+  if (!playerImg) return;
+  const oldSrc = playerImg.src;
+  playerImg.onerror = function() {
+    playerImg.src = 'asset/texture/player/P1_hit.gif';
+    playerImg.onerror = null;
+  };
+  playerImg.src = 'asset/texture/player/P1_hit.mp4';
+  playerImg.classList.add('player-hit-anim-redesign');
+  setTimeout(() => {
+    playerImg.src = oldSrc;
+    playerImg.classList.remove('player-hit-anim-redesign');
+    playerImg.onerror = null;
+  }, 700);
+}
 
 // --- QUESTION ---
 function askQuestion() {
@@ -129,11 +165,47 @@ function checkAnswer(choice, correct) {
     logMsg = `Enemy -${dmg}${enemyGuard ? ' (Guarded!)' : ''}`;
     if (enemyGuard) logMsg += ' ศัตรูป้องกัน!';
     score++;
+    // (อนาคต) เอฟเฟกต์โจมตีศัตรู
   } else {
     const dmg = calculateDamage(enemyATK, 'Player', isGuarding);
     playerHP -= dmg;
     logMsg = `คุณโดน -${dmg}${isGuarding ? ' (Guarded!)' : ''}`;
+    showPlayerHitAnim();
   }
+// --- PLAYER ANIMATION CSS (Redesign) ---
+if (!document.getElementById('player-anim-style')) {
+  const style = document.createElement('style');
+  style.id = 'player-anim-style';
+  style.textContent = `
+.player-attack-anim-redesign {
+  animation: playerAttackAnimRedesign 0.7s cubic-bezier(.7,-0.2,.7,1.5);
+  box-shadow: 0 0 32px 8px #ffe082cc, 0 0 0 0 #fff0;
+  filter: drop-shadow(0 0 16px #ffe082) brightness(1.2) contrast(1.1) saturate(1.2) blur(0.5px);
+}
+.player-hit-anim-redesign {
+  animation: playerHitAnimRedesign 0.7s cubic-bezier(.7,-0.2,.7,1.5);
+  box-shadow: 0 0 32px 8px #ff5252cc, 0 0 0 0 #fff0;
+  filter: drop-shadow(0 0 16px #ff5252) brightness(1.2) contrast(1.1) saturate(1.2) blur(0.5px);
+}
+@keyframes playerAttackAnimRedesign {
+  0% { filter: drop-shadow(0 0 0 #ffe082) brightness(1.2); transform: scale(1) translateX(0); }
+  10% { filter: drop-shadow(0 0 16px #ffe082) brightness(1.5); }
+  30% { filter: drop-shadow(0 0 32px #ffe082) brightness(1.7); transform: scale(1.12) translateX(18px) skewX(-6deg) rotate(-2deg); }
+  50% { filter: drop-shadow(0 0 24px #ffe082) brightness(1.2); transform: scale(0.98) translateX(-10px) skewX(3deg) rotate(2deg); }
+  70% { filter: drop-shadow(0 0 8px #ffe082) brightness(1.1); transform: scale(1.04) translateX(4px); }
+  100% { filter: drop-shadow(0 0 0 #ffe082) brightness(1); transform: scale(1) translateX(0); }
+}
+@keyframes playerHitAnimRedesign {
+  0% { filter: drop-shadow(0 0 0 #ff5252) brightness(1); }
+  10% { filter: drop-shadow(0 0 24px #ff5252) brightness(1.7); }
+  20% { filter: drop-shadow(0 0 32px #ff5252) brightness(2.2); transform: scale(1.08) translateY(-8px) skewX(2deg) rotate(-2deg); }
+  40% { filter: drop-shadow(0 0 16px #ff5252) brightness(0.7); transform: scale(0.95) translateY(6px) skewX(-2deg) rotate(2deg); }
+  60% { filter: drop-shadow(0 0 8px #ff5252) brightness(1.1); transform: scale(1.02) translateY(-2px); }
+  100% { filter: drop-shadow(0 0 0 #ff5252) brightness(1); transform: scale(1) translateY(0); }
+}
+`;
+  document.head.appendChild(style);
+}
   playerHP = Math.max(playerHP, 0);
   enemyHP = Math.max(enemyHP, 0);
   elements.log.textContent = logMsg;

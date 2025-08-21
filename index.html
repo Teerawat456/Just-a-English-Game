@@ -6,54 +6,69 @@
   <title>English Battle</title>
   <style>
     body {
-      background: linear-gradient(135deg, #232526 0%, #414345 100%);
+      background: radial-gradient(ellipse at 50% 30%, #232526 60%, #1a1a1a 100%);
       min-height: 100vh;
       font-family: 'Segoe UI', 'Kanit', Arial, sans-serif;
       margin: 0;
       color: #f3f3f3;
       letter-spacing: 0.01em;
+      overflow-x: hidden;
     }
     #game-ui {
-      max-width: 480px;
-      margin: 32px auto 0 auto;
-      background: rgba(30,30,40,0.98);
-      border-radius: 24px;
-      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.22);
-      padding: 32px 18px 24px 18px;
+      max-width: 500px;
+      margin: 40px auto 0 auto;
+      background: linear-gradient(135deg, rgba(30,30,40,0.98) 80%, #232526 100%);
+      border-radius: 28px;
+      box-shadow: 0 12px 40px 0 #000a, 0 2px 12px 0 #ffe08222;
+      padding: 36px 20px 28px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 18px;
+      gap: 22px;
+      border: 3px solid #ffe082;
+      position: relative;
     }
     #battle-container {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      gap: 18px;
-      margin-bottom: 8px;
+      gap: 22px;
+      margin-bottom: 10px;
     }
     .character {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       width: 48%;
+      position: relative;
+      background: linear-gradient(135deg, #232526 60%, #414345 100%);
+      border-radius: 18px;
+      box-shadow: 0 2px 12px 0 #ffe08222;
+      border: 2.5px solid #64b5f6;
+      padding: 12px 0 8px 0;
     }
     .character img {
-      width: 90px;
-      height: 90px;
+      width: 100px;
+      height: 100px;
       object-fit: contain;
-      border-radius: 16px;
+      border-radius: 18px;
       background: #232526;
-      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.18);
-      border: 2px solid #b2ff59;
+      box-shadow: 0 2px 16px 0 #ffe08244, 0 0px 0px 2px #b2ff59;
+      border: 3px solid #ffe082;
+      transition: box-shadow 0.2s;
+    }
+    .character img:active {
+      box-shadow: 0 0 24px 8px #ff5252cc;
     }
     .hp-bar-container {
-      width: 100%;
-      background: #222;
-      border-radius: 8px;
+      width: 90%;
+      background: #181818;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 1px 4px 0 rgba(0,0,0,0.12);
+      box-shadow: 0 1px 6px 0 #ff525244;
+      border: 2px solid #ff5252;
+      margin: 0 auto;
     }
     .hp-bar {
       width: 100%;
@@ -61,107 +76,121 @@
       color: #232526;
       font-weight: bold;
       text-align: center;
-      padding: 4px 0;
-      font-size: 1.1em;
+      padding: 6px 0;
+      font-size: 1.15em;
       border-radius: 8px;
       transition: width 0.3s;
+      text-shadow: 0 1px 4px #fffde7cc;
+      letter-spacing: 0.04em;
     }
     #action-buttons {
       display: flex;
-      gap: 18px;
-      margin: 8px 0 0 0;
+      gap: 22px;
+      margin: 10px 0 0 0;
     }
     #action-buttons button {
       background: linear-gradient(90deg, #b2ff59 0%, #ffe082 100%);
       color: #232526;
       font-weight: 700;
-      border: none;
-      border-radius: 12px;
-      padding: 12px 28px;
-      font-size: 1.1em;
+      border: 2.5px solid #64b5f6;
+      border-radius: 14px;
+      padding: 14px 32px;
+      font-size: 1.15em;
       cursor: pointer;
-      box-shadow: 0 2px 8px 0 rgba(178,255,89,0.12);
-      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 2px 12px 0 #b2ff5915;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      text-shadow: 0 1px 4px #fffde7cc;
     }
     #action-buttons button:hover {
       background: linear-gradient(90deg, #ffe082 0%, #b2ff59 100%);
-      transform: translateY(-2px) scale(1.04);
+      transform: translateY(-2px) scale(1.06);
+      box-shadow: 0 4px 18px 0 #ffe08244;
     }
     #question {
-      background: #232526;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px 0 rgba(255,255,255,0.04);
-      padding: 18px 12px 14px 12px;
+      background: linear-gradient(135deg, #232526 80%, #414345 100%);
+      border-radius: 18px;
+      box-shadow: 0 2px 12px 0 #ffe08222;
+      padding: 22px 14px 16px 14px;
       width: 100%;
-      margin: 0 0 8px 0;
+      margin: 0 0 10px 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      border: 2.5px solid #64b5f6;
     }
     #question-text {
-      font-size: 1.15em;
+      font-size: 1.18em;
       color: #ffe082;
-      font-weight: 600;
-      margin-bottom: 6px;
+      font-weight: 700;
+      margin-bottom: 8px;
       text-align: center;
+      text-shadow: 0 1px 4px #232526cc;
     }
     #answerButtons {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
       width: 100%;
     }
     #answerButtons button {
       background: linear-gradient(90deg, #64b5f6 0%, #b2ff59 100%);
       color: #232526;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 18px;
-      font-size: 1em;
+      font-weight: 700;
+      border: 2px solid #ffe082;
+      border-radius: 12px;
+      padding: 12px 22px;
+      font-size: 1.05em;
       cursor: pointer;
-      box-shadow: 0 1px 6px 0 rgba(100,181,246,0.10);
+      box-shadow: 0 1px 8px 0 #64b5f622;
       transition: background 0.2s, transform 0.1s;
+      text-shadow: 0 1px 4px #fffde7cc;
     }
     #answerButtons button:hover {
       background: linear-gradient(90deg, #b2ff59 0%, #64b5f6 100%);
-      transform: translateY(-2px) scale(1.04);
+      transform: translateY(-2px) scale(1.06);
     }
     #log {
-      min-height: 28px;
+      min-height: 32px;
       color: #b2ff59;
-      font-size: 1.1em;
-      font-weight: 600;
+      font-size: 1.15em;
+      font-weight: 700;
       text-align: center;
-      margin: 6px 0 0 0;
-      letter-spacing: 0.02em;
+      margin: 8px 0 0 0;
+      letter-spacing: 0.03em;
       text-shadow: 0 1px 4px #232526;
+      background: rgba(50,60,40,0.18);
+      border-radius: 8px;
+      padding: 6px 0;
+      border: 2px solid #b2ff59;
+      box-shadow: 0 1px 6px 0 #b2ff5922;
     }
     #score {
       color: #ffe082;
-      font-size: 1.1em;
-      font-weight: 700;
-      margin: 0 0 8px 0;
+      font-size: 1.15em;
+      font-weight: 800;
+      margin: 0 0 10px 0;
       text-align: center;
+      text-shadow: 0 1px 4px #232526cc;
     }
     #reset-btn {
       background: linear-gradient(90deg, #ff5252 0%, #ffe082 100%);
       color: #232526;
       font-weight: 700;
-      border: none;
-      border-radius: 12px;
-      padding: 10px 32px;
-      font-size: 1.1em;
+      border: 2.5px solid #ffe082;
+      border-radius: 14px;
+      padding: 12px 36px;
+      font-size: 1.15em;
       cursor: pointer;
-      margin-top: 8px;
-      box-shadow: 0 2px 8px 0 rgba(255,82,82,0.10);
+      margin-top: 10px;
+      box-shadow: 0 2px 12px 0 #ff525215;
       transition: background 0.2s, transform 0.1s;
+      text-shadow: 0 1px 4px #fffde7cc;
     }
     #reset-btn:hover {
       background: linear-gradient(90deg, #ffe082 0%, #ff5252 100%);
-      transform: translateY(-2px) scale(1.04);
+      transform: translateY(-2px) scale(1.06);
     }
     /* --- LOBBY REVAMP --- */
     #lobby-wrap {
@@ -183,6 +212,7 @@
       margin-bottom: 10px;
       filter: drop-shadow(0 2px 8px #ffe08288);
       user-select: none;
+      text-shadow: 0 2px 8px #23252688;
     }
     #lobby-title {
       font-size: 2.1em;
@@ -198,6 +228,7 @@
       margin-bottom: 10px;
       font-weight: 600;
       letter-spacing: 0.03em;
+      text-shadow: 0 1px 4px #232526cc;
     }
     #lobby-desc {
       font-size: 1em;
@@ -206,6 +237,7 @@
       max-width: 340px;
       text-align: center;
       opacity: 0.92;
+      text-shadow: 0 1px 4px #232526cc;
     }
     #difficulty-select {
       display: flex;
@@ -213,31 +245,33 @@
       gap: 18px;
       background: rgba(30,30,40,0.98);
       border-radius: 22px;
-      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.22);
+      box-shadow: 0 8px 32px 0 #ffe08222;
       padding: 38px 24px 32px 24px;
       max-width: 370px;
       align-items: center;
       animation: popIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+      border: 2.5px solid #ffe082;
     }
     #difficulty-select button {
       background: linear-gradient(90deg, #64b5f6 0%, #ffe082 100%);
       color: #232526;
       font-weight: 700;
-      border: none;
+      border: 2.5px solid #b2ff59;
       border-radius: 16px;
       padding: 16px 0;
       font-size: 1.18em;
       width: 210px;
       cursor: pointer;
-      box-shadow: 0 2px 12px 0 rgba(100,181,246,0.10);
+      box-shadow: 0 2px 12px 0 #64b5f622;
       transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
       margin: 0 auto;
       letter-spacing: 0.03em;
+      text-shadow: 0 1px 4px #fffde7cc;
     }
     #difficulty-select button:hover {
       background: linear-gradient(90deg, #ffe082 0%, #64b5f6 100%);
-      transform: translateY(-2px) scale(1.04);
-      box-shadow: 0 4px 18px 0 rgba(255,224,130,0.18);
+      transform: translateY(-2px) scale(1.06);
+      box-shadow: 0 4px 18px 0 #ffe08244;
     }
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -272,26 +306,29 @@
   <!-- Game UI (ซ่อนไว้ก่อน ให้ main.js ควบคุม) -->
   <div id="game-ui" style="display:none;">
     <div id="battle-container">
-      <div class="character">
+      <div class="character" style="position:relative;">
+  <!-- ...existing code... (slot UI removed) -->
         <img id="player-img" src="asset/texture/player/P1_IDLE.gif" alt="Player" />
         <div class="hp-bar-container">
           <div id="player-hp-bar" class="hp-bar" data-max="100">100</div>
         </div>
       </div>
       <div class="character">
-        <img id="enemy-img" src="asset/texture/enemy/Th14GreenYinYangEnemy.png" alt="Enemy" onerror="this.src='asset/texture/enemy/E1_Idle.gif'" />
+        <img id="enemy-img" src="asset/texture/enemy/E1_IDLE (NEW).png" alt="Enemy" onerror="this.src='asset/texture/enemy/E1_Idle.gif'" />
         <div class="hp-bar-container">
           <div id="enemy-hp-bar" class="hp-bar" data-max="100">100</div>
         </div>
       </div>
     </div>
-    <div id="action-buttons" style="display:none;">
-      <button onclick="playerAction('attack')">🔪 โจมตี</button>
-      <button onclick="playerAction('guard')">🛡️ ป้องกัน</button>
-    </div>
+  <!-- ...existing code... (slot action UI removed) -->
+    <!-- Removed empty .slot-box CSS ruleset -->
     <div id="question">
       <p id="question-text">❓ คำถามจะอยู่ที่นี่</p>
       <div id="answerButtons"></div>
+    </div>
+    <div id="action-buttons">
+      <button onclick="playerAction('attack')">โจมตี</button>
+      <button onclick="playerAction('guard')">ป้องกัน</button>
     </div>
     <div id="log"></div>
     <div id="score">Score: 0</div>
@@ -300,7 +337,7 @@
 
 
   <!-- Background Music (auto play, loop, hidden) -->
-  <audio id="bgm" src="audio/Canto_I_Battle_Theme_A1.mp3" loop preload="auto" style="display:none;"></audio>
+  <audio id="bgm" src="audio/Iron_Lotus.mp3" loop preload="auto" style="display:none;"></audio>
   <div id="bgm-unlock" style="display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(30,30,40,0.96);color:#ffe082;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
     <div style="font-size:2em;">🔊</div>
     <div style="font-size:1.2em;font-weight:700;">แตะหน้าจอหรือกดปุ่มด้านล่างเพื่อเปิดเสียงเพลง</div>
