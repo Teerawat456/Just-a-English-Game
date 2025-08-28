@@ -1,3 +1,69 @@
+// --- HIGH SCORE UI ---
+function showHighScores() {
+  let saved = [];
+  try {
+    saved = JSON.parse(localStorage.getItem('quiz_scores')) || [];
+  } catch (e) {
+    saved = [];
+  }
+  // เรียงจากคะแนนมากไปน้อย
+  saved.sort((a, b) => b.score - a.score);
+  // สร้าง HTML
+  let html = `<div id="highscore-modal-bg" style="position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(30,30,40,0.92);display:flex;align-items:center;justify-content:center;">
+    <div id="highscore-modal" style="background:linear-gradient(135deg,#232526 80%,#414345 100%);border-radius:22px;box-shadow:0 8px 32px 0 #ffe08244;padding:32px 24px 24px 24px;min-width:340px;max-width:95vw;max-height:80vh;overflow:auto;position:relative;">
+      <div style="font-size:2em;font-weight:800;color:#ffe082;text-align:center;margin-bottom:18px;text-shadow:0 2px 8px #23252688;">🏆 High Scores</div>
+      <table style="width:100%;border-collapse:collapse;font-size:1.08em;">
+        <tr style="color:#b2ff59;font-weight:700;background:#232526;">
+          <th style="padding:6px 8px;">#</th>
+          <th style="padding:6px 8px;">ชื่อ</th>
+          <th style="padding:6px 8px;">คะแนน</th>
+          <th style="padding:6px 8px;">ความยาก</th>
+          <th style="padding:6px 8px;">วันที่</th>
+        </tr>`;
+  if (saved.length === 0) {
+    html += `<tr><td colspan='5' style='text-align:center;color:#ff5252;padding:18px 0;'>ยังไม่มีคะแนน</td></tr>`;
+  } else {
+    saved.slice(0, 20).forEach((s, i) => {
+      html += `<tr style="background:${i%2?'#232526':'#2e2e38'};">
+        <td style="padding:6px 8px;text-align:center;">${i+1}</td>
+        <td style="padding:6px 8px;">${s.name}</td>
+        <td style="padding:6px 8px;text-align:center;">${s.score}</td>
+        <td style="padding:6px 8px;text-align:center;">${s.difficulty||'-'}</td>
+        <td style="padding:6px 8px;font-size:0.95em;">${s.date||''}</td>
+      </tr>`;
+    });
+  }
+  html += `</table>
+      <button id="close-highscore-btn" style="margin-top:22px;background:linear-gradient(90deg,#ffe082,#b2ff59);color:#232526;font-weight:700;border:none;border-radius:12px;padding:12px 32px;font-size:1.1em;cursor:pointer;box-shadow:0 2px 8px 0 #ffe08222;">ปิด</button>
+    </div>
+  </div>`;
+  // แสดง modal
+  const modalDiv = document.createElement('div');
+  modalDiv.innerHTML = html;
+  document.body.appendChild(modalDiv);
+  document.getElementById('close-highscore-btn').onclick = () => {
+    modalDiv.remove();
+  };
+  document.getElementById('highscore-modal-bg').onclick = (e) => {
+    if (e.target === document.getElementById('highscore-modal-bg')) modalDiv.remove();
+  };
+}
+// --- SCORE SAVE SYSTEM ---
+function saveScore(score) {
+  let saved = [];
+  try {
+    saved = JSON.parse(localStorage.getItem('quiz_scores')) || [];
+  } catch (e) {
+    saved = [];
+  }
+  const name = prompt('กรุณาใส่ชื่อของคุณเพื่อบันทึกคะแนน:', '');
+  if (!name) return;
+  // ดึง difficulty ล่าสุดจาก window (กัน currentDifficulty เปลี่ยนระหว่างเกม)
+  let diff = window.currentDifficulty || currentDifficulty || '-';
+  saved.push({ name, score, difficulty: diff, date: new Date().toLocaleString() });
+  localStorage.setItem('quiz_scores', JSON.stringify(saved));
+  alert('บันทึกคะแนนสำเร็จ!');
+}
 // --- CONFIG ---
 let playerHP, playerATK, enemyHP, enemyATK, score, currentDifficulty, isGuarding;
 let questionPool = [];
@@ -15,55 +81,65 @@ const elements = {
 
 // --- LOBBY ---
 window.addEventListener('DOMContentLoaded', () => {
-  // สร้าง lobby revamp
+  // ถ้ามี lobby-wrap อยู่แล้ว ไม่ต้องสร้างซ้ำ
   if (!document.getElementById('lobby-wrap')) {
-    const wrap = document.createElement('div');
-    wrap.id = 'lobby-wrap';
-    wrap.style.display = 'flex';
-    wrap.style.flexDirection = 'column';
-    wrap.style.alignItems = 'center';
-    wrap.style.justifyContent = 'center';
-    wrap.style.minHeight = '100vh';
-    wrap.innerHTML = `
-      <div id="lobby-logo" style="font-size:2.5em;margin-bottom:10px;">⚔️</div>
-      <div id="lobby-title" style="font-size:2em;font-weight:800;color:#ffe082;margin-bottom:8px;">เลือกความยาก</div>
-      <div id="lobby-subtitle" style="font-size:1.1em;color:#b2ff59;margin-bottom:10px;">Turn-based Quiz Battle</div>
-      <div id="lobby-desc" style="font-size:1em;color:#fffde7;margin-bottom:22px;max-width:340px;text-align:center;">ตอบคำถามให้ถูกต้องเพื่อโจมตีศัตรู เลือกโหมดที่ท้าทายและพิชิตชัย!<br>โจมตี, ป้องกัน, และวางแผนเพื่อเอาชนะ!</div>
-      <div id="difficulty-select" style="display:flex;flex-direction:column;gap:18px;background:rgba(30,30,40,0.98);border-radius:22px;box-shadow:0 8px 32px 0 rgba(31,38,135,0.22);padding:38px 24px 32px 24px;max-width:370px;">
-        <button onclick="initGame('Easy')">ง่าย</button>
-        <button onclick="initGame('Normal')">ปกติ</button>
-        <button onclick="initGame('Hard')">ยาก</button>
-        <button onclick="initGame('Lunatic')">Lunatic</button>
+    const lobby = document.createElement('div');
+    lobby.id = 'lobby-wrap';
+    lobby.style.display = '';
+    lobby.innerHTML = `
+      <div id="lobby-logo">🎮</div>
+      <div id="lobby-title">English Battle</div>
+      <div id="lobby-subtitle">เลือกความยาก</div>
+      <div id="difficulty-select">
+        <button data-diff="Easy">Easy</button>
+        <button data-diff="Normal">Normal</button>
+        <button data-diff="Hard">Hard</button>
+        <button data-diff="Lunatic">Lunatic</button>
       </div>
+      <div id="lobby-desc">ตอบคำถามภาษาอังกฤษให้ถูกต้องเพื่อโจมตีศัตรูและสะสมคะแนนสูงสุด!</div>
+      <button id="show-highscore-btn" style="margin-top:18px;background:linear-gradient(90deg,#ffe082,#b2ff59);color:#232526;font-weight:700;border:none;border-radius:12px;padding:12px 32px;font-size:1.1em;cursor:pointer;box-shadow:0 2px 8px 0 #ffe08222;">ดูคะแนนสูงสุด</button>
     `;
-    document.body.appendChild(wrap);
+    document.body.appendChild(lobby);
   }
+  // กดเลือกความยาก
+  document.querySelectorAll('#difficulty-select button').forEach(btn => {
+    btn.onclick = function() {
+      const diff = this.getAttribute('data-diff');
+      // กำหนดค่าตัวละครและ pool ตามความยาก
+      if (diff === 'Easy') {
+        window.player = [100, 25];
+        window.enemy = [60, 15];
+        window.pool = easyQuestions;
+      } else if (diff === 'Normal') {
+        window.player = [100, 20];
+        window.enemy = [80, 20];
+        window.pool = normalQuestions;
+      } else if (diff === 'Hard') {
+        window.player = [100, 18];
+        window.enemy = [100, 28];
+        window.pool = hardQuestions;
+      } else if (diff === 'Lunatic') {
+        window.player = [100, 15];
+        window.enemy = [120, 50];
+        window.pool = lunaticQuestions;
+      }
+      window.currentDifficulty = diff;
+      document.getElementById('lobby-wrap').style.display = 'none';
+      document.getElementById('game-ui').style.display = '';
+      if (typeof window.initGame === 'function') window.initGame();
+    };
+  });
+  // ปุ่มดูคะแนนสูงสุด
+  const showBtn = document.getElementById('show-highscore-btn');
+  if (showBtn) showBtn.onclick = showHighScores;
   // ซ่อน game-ui ตอนแรก
   document.getElementById('game-ui').style.display = 'none';
 });
-
-// --- GAME INIT ---
-function initGame(mode) {
-  // ซ่อน lobby
-  const lobby = document.getElementById('lobby-wrap');
-  if (lobby) lobby.style.display = 'none';
-  document.getElementById('game-ui').style.display = '';
-
-  // บังคับเล่นเพลง (ใช้ tryPlayBGM จาก window)
-  if (typeof window.tryPlayBGM === 'function') window.tryPlayBGM();
-  currentDifficulty = mode;
-  isGuarding = false;
+// --- INIT GAME ---
+function initGame() {
+  [playerHP, playerATK] = [parseInt(player[0]) || 0, parseInt(player[1]) || 0];
+  [enemyHP, enemyATK] = [parseInt(enemy[0]) || 0, parseInt(enemy[1]) || 0];
   score = 0;
-
-  const config = {
-    Easy: { player: [120, 12], enemy: [100, 10], pool: easyQuestions },
-    Normal: { player: [100, 15], enemy: [100, 15], pool: normalQuestions },
-    Hard: { player: [100, 12], enemy: [120, 18], pool: hardQuestions },
-    Lunatic: { player: [80, 10], enemy: [200, 35], pool: lunaticQuestions }
-  };
-  const { player, enemy, pool } = config[mode];
-  [playerHP, playerATK] = player;
-  [enemyHP, enemyATK] = enemy;
   questionPool = [...pool];
 
   elements.playerHPBar.dataset.max = playerHP;
@@ -80,8 +156,12 @@ window.initGame = initGame;
 
 // --- HP BAR ---
 function updateHPBars() {
-  elements.playerHPBar.textContent = `${playerHP} / ${elements.playerHPBar.dataset.max}`;
-  elements.enemyHPBar.textContent = `${enemyHP} / ${elements.enemyHPBar.dataset.max}`;
+  let pHP = isNaN(playerHP) ? 0 : playerHP;
+  let pMax = isNaN(parseInt(elements.playerHPBar.dataset.max)) ? 0 : parseInt(elements.playerHPBar.dataset.max);
+  let eHP = isNaN(enemyHP) ? 0 : enemyHP;
+  let eMax = isNaN(parseInt(elements.enemyHPBar.dataset.max)) ? 0 : parseInt(elements.enemyHPBar.dataset.max);
+  elements.playerHPBar.textContent = `${pHP} / ${pMax}`;
+  elements.enemyHPBar.textContent = `${eHP} / ${eMax}`;
 }
 
 // --- PLAYER ACTION ---
@@ -160,16 +240,39 @@ function checkAnswer(choice, correct) {
   const enemyGuard = Math.random() < 0.5;
   let logMsg = '';
   if (choice === correct) {
-    const dmg = calculateDamage(playerATK, 'Enemy', enemyGuard);
+    let raw = parseInt(playerATK);
+    if (isNaN(raw)) raw = 0;
+    let dmg = calculateDamage(playerATK, 'Enemy', enemyGuard);
+    if (isNaN(dmg)) dmg = 0;
+    if (enemyGuard && raw > 0 && dmg < 1) dmg = 1;
+    enemyHP = isNaN(enemyHP) ? 0 : enemyHP;
     enemyHP -= dmg;
-    logMsg = `Enemy -${dmg}${enemyGuard ? ' (Guarded!)' : ''}`;
-    if (enemyGuard) logMsg += ' ศัตรูป้องกัน!';
-    score++;
+    if (isNaN(enemyHP)) enemyHP = 0;
+    if (enemyGuard) {
+      logMsg = `Enemy -${dmg} (Guarded! ลดจาก ${raw} เหลือ ${dmg}) ศัตรูป้องกัน!`;
+    } else {
+      logMsg = `Enemy -${dmg}`;
+    }
+  score = isNaN(score) ? 0 : score;
+  // ให้คะแนนตามระดับความยาก
+  let scoreTable = { Easy: 1, Normal: 2, Hard: 3, Lunatic: 5 };
+  let add = scoreTable[currentDifficulty] || 1;
+  score += add;
     // (อนาคต) เอฟเฟกต์โจมตีศัตรู
   } else {
-    const dmg = calculateDamage(enemyATK, 'Player', isGuarding);
+    let raw = parseInt(enemyATK);
+    if (isNaN(raw)) raw = 0;
+    let dmg = calculateDamage(enemyATK, 'Player', isGuarding);
+    if (isNaN(dmg)) dmg = 0;
+    if (isGuarding && raw > 0 && dmg < 1) dmg = 1;
+    playerHP = isNaN(playerHP) ? 0 : playerHP;
     playerHP -= dmg;
-    logMsg = `คุณโดน -${dmg}${isGuarding ? ' (Guarded!)' : ''}`;
+    if (isNaN(playerHP)) playerHP = 0;
+    if (isGuarding) {
+      logMsg = `คุณโดน -${dmg} (Guarded! ลดจาก ${raw} เหลือ ${dmg})`;
+    } else {
+      logMsg = `คุณโดน -${dmg}`;
+    }
     showPlayerHitAnim();
   }
 // --- PLAYER ANIMATION CSS (Redesign) ---
@@ -216,6 +319,21 @@ if (!document.getElementById('player-anim-style')) {
       elements.questionBox.style.display = 'none';
       elements.actionButtons.style.display = 'none';
       elements.log.textContent = playerHP <= 0 ? '❌ คุณแพ้แล้ว!' : '🎉 คุณชนะแล้ว!';
+      // เพิ่มปุ่มบันทึกคะแนนเมื่อชนะ
+      if (playerHP > 0) {
+        if (!document.getElementById('save-score-btn')) {
+          const btn = document.createElement('button');
+          btn.id = 'save-score-btn';
+          btn.textContent = 'บันทึกคะแนน';
+          btn.style.marginTop = '18px';
+          btn.onclick = () => {
+            saveScore(score);
+            btn.disabled = true;
+            btn.textContent = 'บันทึกแล้ว';
+          };
+          elements.log.appendChild(btn);
+        }
+      }
     }, 1500);
   } else {
     setTimeout(() => {
@@ -227,12 +345,21 @@ if (!document.getElementById('player-anim-style')) {
 }
 
 function calculateDamage(base, target, guarding) {
+  // ปรับสมดุล guard ใหม่: Player guard ลดดาเมจ 40/30/20/10%, Enemy guard ลดดาเมจ 30/40/50/60%
   const reduction = {
-    Player: { Easy: 0.65, Normal: 0.35, Hard: 0.25, Lunatic: 0.2 },
-    Enemy: { Easy: 0.15, Normal: 0.25, Hard: 0.5, Lunatic: 0.25 }
+    Player: { Easy: 0.4, Normal: 0.3, Hard: 0.2, Lunatic: 0.1 },
+    Enemy: { Easy: 0.3, Normal: 0.4, Hard: 0.5, Lunatic: 0.6 }
   };
   const rate = reduction[target][currentDifficulty];
-  return guarding ? Math.round(base * (1 - rate)) : base;
+  base = parseInt(base);
+  if (isNaN(base)) base = 0;
+  if (guarding) {
+    let dmg = Math.round(base * (1 - rate));
+    if (isNaN(dmg)) dmg = 0;
+    if (base > 0 && dmg < 1) dmg = 1;
+    return dmg;
+  }
+  return base;
 }
 
 function resetGame() {

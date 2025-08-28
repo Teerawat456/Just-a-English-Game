@@ -1,4 +1,11 @@
 const easyQuestions = [
+  { question: "Which animal can fly?", choices: ["Dog", "Cat", "Bird", "Fish"], correct: "Bird" },
+  { question: "What do you drink in the morning?", choices: ["Water", "Coffee", "Juice", "All of these"], correct: "All of these" },
+  { question: "Which is a vegetable?", choices: ["Apple", "Carrot", "Banana", "Orange"], correct: "Carrot" },
+  { question: "What color are bananas?", choices: ["Red", "Yellow", "Blue", "Green"], correct: "Yellow" },
+  { question: "Which one is a day of the week?", choices: ["January", "Monday", "Summer", "Night"], correct: "Monday" },
+  { question: "What is the opposite of 'hot'?", choices: ["cold", "warm", "soft", "hard"], correct: "cold" },
+  { question: "Which animal barks?", choices: ["Cat", "Dog", "Bird", "Fish"], correct: "Dog" },
   { question: "What is the plural of 'cat'?", choices: ["cats", "cat's", "cates", "catz"], correct: "cats" },
   { question: "Which one is a color?", choices: ["run", "blue", "quick", "jump"], correct: "blue" },
   { question: "How many legs does a spider have?", choices: ["6", "8", "4", "10"], correct: "8" },
@@ -12,6 +19,13 @@ const easyQuestions = [
 ];
 
 const normalQuestions = [
+  { question: "Which is a pronoun?", choices: ["he", "run", "blue", "cat"], correct: "he" },
+  { question: "What is the past tense of 'eat'?", choices: ["eated", "ate", "eats", "eating"], correct: "ate" },
+  { question: "Which is a synonym for 'happy'?", choices: ["sad", "joyful", "angry", "tired"], correct: "joyful" },
+  { question: "Which is an antonym for 'fast'?", choices: ["quick", "slow", "run", "jump"], correct: "slow" },
+  { question: "Which is a question word?", choices: ["What", "Cat", "Run", "Blue"], correct: "What" },
+  { question: "Which is a preposition?", choices: ["under", "run", "blue", "happy"], correct: "under" },
+  { question: "What is the plural of 'child'?", choices: ["childs", "children", "childes", "child"], correct: "children" },
   { question: "Choose the correct past form of 'go'", choices: ["goes", "goed", "went", "gone"], correct: "went" },
   { question: "Which sentence is correct?", choices: ["He go to school", "He goes to school", "He going to school", "He go"], correct: "He goes to school" },
   { question: "What is the opposite of 'happy'?", choices: ["sad", "angry", "excited", "smile"], correct: "sad" },
@@ -24,6 +38,13 @@ const normalQuestions = [
 ];
 
 const hardQuestions = [
+  { question: "Which is a collective noun?", choices: ["team", "run", "blue", "cat"], correct: "team" },
+  { question: "What is the meaning of 'reluctant'?", choices: ["willing", "unwilling", "happy"], correct: "unwilling" },
+  { question: "Which is a phrasal verb?", choices: ["look up", "run", "cat", "blue"], correct: "look up" },
+  { question: "What is the past participle of 'write'?", choices: ["wrote", "written", "writing"], correct: "written" },
+  { question: "Which is an interjection?", choices: ["Wow!", "Run", "Blue", "Cat"], correct: "Wow!" },
+  { question: "What is the superlative form of 'good'?", choices: ["goodest", "better", "best"], correct: "best" },
+  { question: "Which is a synonym for 'rapid'?", choices: ["slow", "quick", "sad"], correct: "quick" },
   { question: "Choose the correct: 'She ___ to the store yesterday.'", correct: "went", choices: ["go", "goed", "went"] },
   { question: "Which word is an antonym of 'expand'?", correct: "shrink", choices: ["shrink", "grow", "inflate"] },
   { question: "What does 'benevolent' mean?", correct: "kind", choices: ["angry", "kind", "lazy"] },
@@ -43,6 +64,56 @@ const hardQuestions = [
 ];
 
 const lunaticQuestions = [
+  {
+    question: "Which sentence contains a dangling participle?",
+    choices: [
+      "Walking down the street, the trees were beautiful.",
+      "The trees were beautiful as I walked down the street.",
+      "I walked down the street and saw beautiful trees.",
+      "The street was beautiful."
+    ],
+    correct: "Walking down the street, the trees were beautiful."
+  },
+  {
+    question: "What is the meaning of 'defenestration'?",
+    choices: ["Throwing out of a window", "Defending a nation", "A type of flower", "A kind of dance"],
+    correct: "Throwing out of a window"
+  },
+  {
+    question: "Which is an example of a zeugma?",
+    choices: [
+      "She broke his car and his heart.",
+      "He ran quickly and quietly.",
+      "The cat sat on the mat.",
+      "They went to the store and bought apples."
+    ],
+    correct: "She broke his car and his heart."
+  },
+  {
+    question: "Which sentence uses an oxymoron?",
+    choices: [
+      "Bittersweet memories last forever.",
+      "The cat is on the mat.",
+      "He runs every morning.",
+      "She likes apples."
+    ],
+    correct: "Bittersweet memories last forever."
+  },
+  {
+    question: "Which sentence uses a subjunctive mood?",
+    choices: [
+      "If I were you, I would go.",
+      "I am going to the store.",
+      "She likes ice cream.",
+      "He will come tomorrow."
+    ],
+    correct: "If I were you, I would go."
+  },
+  {
+    question: "What is the meaning of 'pulchritudinous'?",
+    choices: ["Beautiful", "Ugly", "Dangerous", "Tiny"],
+    correct: "Beautiful"
+  },
   {
     question: "Which sentence contains an ellipsis?",
     choices: [
