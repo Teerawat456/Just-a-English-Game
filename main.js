@@ -242,36 +242,42 @@ function checkAnswer(choice, correct) {
   if (choice === correct) {
     let raw = parseInt(playerATK);
     if (isNaN(raw)) raw = 0;
+    // ระบบ critical: 15% โอกาส 2x
+    let isCrit = Math.random() < 0.15;
     let dmg = calculateDamage(playerATK, 'Enemy', enemyGuard);
     if (isNaN(dmg)) dmg = 0;
+    if (isCrit) dmg *= 2;
     if (enemyGuard && raw > 0 && dmg < 1) dmg = 1;
     enemyHP = isNaN(enemyHP) ? 0 : enemyHP;
     enemyHP -= dmg;
     if (isNaN(enemyHP)) enemyHP = 0;
     if (enemyGuard) {
-      logMsg = `Enemy -${dmg} (Guarded! ลดจาก ${raw} เหลือ ${dmg}) ศัตรูป้องกัน!`;
+      logMsg = `Enemy -${dmg} (Guarded! ลดจาก ${raw}${isCrit ? ' (CRIT x2)' : ''} เหลือ ${dmg}) ศัตรูป้องกัน!`;
     } else {
-      logMsg = `Enemy -${dmg}`;
+      logMsg = `Enemy -${dmg}${isCrit ? ' (CRIT x2!)' : ''}`;
     }
-  score = isNaN(score) ? 0 : score;
-  // ให้คะแนนตามระดับความยาก
-  let scoreTable = { Easy: 1, Normal: 2, Hard: 3, Lunatic: 5 };
-  let add = scoreTable[currentDifficulty] || 1;
-  score += add;
+    score = isNaN(score) ? 0 : score;
+    // ให้คะแนนตามระดับความยาก
+    let scoreTable = { Easy: 1, Normal: 2, Hard: 3, Lunatic: 5 };
+    let add = scoreTable[currentDifficulty] || 1;
+    score += add;
     // (อนาคต) เอฟเฟกต์โจมตีศัตรู
   } else {
     let raw = parseInt(enemyATK);
     if (isNaN(raw)) raw = 0;
+    // ระบบ critical: 15% โอกาส 2x
+    let isCrit = Math.random() < 0.15;
     let dmg = calculateDamage(enemyATK, 'Player', isGuarding);
     if (isNaN(dmg)) dmg = 0;
+    if (isCrit) dmg *= 2;
     if (isGuarding && raw > 0 && dmg < 1) dmg = 1;
     playerHP = isNaN(playerHP) ? 0 : playerHP;
     playerHP -= dmg;
     if (isNaN(playerHP)) playerHP = 0;
     if (isGuarding) {
-      logMsg = `คุณโดน -${dmg} (Guarded! ลดจาก ${raw} เหลือ ${dmg})`;
+      logMsg = `คุณโดน -${dmg} (Guarded! ลดจาก ${raw}${isCrit ? ' (CRIT x2)' : ''} เหลือ ${dmg})`;
     } else {
-      logMsg = `คุณโดน -${dmg}`;
+      logMsg = `คุณโดน -${dmg}${isCrit ? ' (CRIT x2!)' : ''}`;
     }
     showPlayerHitAnim();
   }
